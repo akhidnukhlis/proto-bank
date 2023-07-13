@@ -29,6 +29,13 @@ type DocumentClient interface {
 	ListDocument(ctx context.Context, in *DocumentParameterRequest, opts ...grpc.CallOption) (*ListServiceDocumentResponse, error)
 	RevokeDocument(ctx context.Context, in *RevokeDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
 	UploadFileService(ctx context.Context, opts ...grpc.CallOption) (Document_UploadFileServiceClient, error)
+	DownloadFileService(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (Document_DownloadFileServiceClient, error)
+	GetInvoiceDocument(ctx context.Context, in *GetInvoiceDocumentRequest, opts ...grpc.CallOption) (*GetInvoiceDocumentResponse, error)
+	GetSupportingDocument(ctx context.Context, in *GetSupportingDocumentRequest, opts ...grpc.CallOption) (*GetSupportingDocumentResponse, error)
+	CreateInvoiceDocument(ctx context.Context, in *CreateInvoiceDocumentRequest, opts ...grpc.CallOption) (*CreateInvoiceDocumentResponse, error)
+	CreateSupportingDocument(ctx context.Context, in *CreateSupportingDocumentRequest, opts ...grpc.CallOption) (*CreateSupportingDocumentResponse, error)
+	UpdateInvoiceDocument(ctx context.Context, in *UpdateInvoiceDocumentRequest, opts ...grpc.CallOption) (*UpdateInvoiceDocumentResponse, error)
+	UpdateSupportingDocument(ctx context.Context, in *UpdateSupportingDocumentRequest, opts ...grpc.CallOption) (*UpdateSupportingDocumentResponse, error)
 }
 
 type documentClient struct {
@@ -152,6 +159,92 @@ func (x *documentUploadFileServiceClient) CloseAndRecv() (*UploadFileResponse, e
 	return m, nil
 }
 
+func (c *documentClient) DownloadFileService(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (Document_DownloadFileServiceClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Document_ServiceDesc.Streams[2], "/Document/DownloadFileService", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &documentDownloadFileServiceClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Document_DownloadFileServiceClient interface {
+	Recv() (*DownloadFileResponse, error)
+	grpc.ClientStream
+}
+
+type documentDownloadFileServiceClient struct {
+	grpc.ClientStream
+}
+
+func (x *documentDownloadFileServiceClient) Recv() (*DownloadFileResponse, error) {
+	m := new(DownloadFileResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *documentClient) GetInvoiceDocument(ctx context.Context, in *GetInvoiceDocumentRequest, opts ...grpc.CallOption) (*GetInvoiceDocumentResponse, error) {
+	out := new(GetInvoiceDocumentResponse)
+	err := c.cc.Invoke(ctx, "/Document/GetInvoiceDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentClient) GetSupportingDocument(ctx context.Context, in *GetSupportingDocumentRequest, opts ...grpc.CallOption) (*GetSupportingDocumentResponse, error) {
+	out := new(GetSupportingDocumentResponse)
+	err := c.cc.Invoke(ctx, "/Document/GetSupportingDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentClient) CreateInvoiceDocument(ctx context.Context, in *CreateInvoiceDocumentRequest, opts ...grpc.CallOption) (*CreateInvoiceDocumentResponse, error) {
+	out := new(CreateInvoiceDocumentResponse)
+	err := c.cc.Invoke(ctx, "/Document/CreateInvoiceDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentClient) CreateSupportingDocument(ctx context.Context, in *CreateSupportingDocumentRequest, opts ...grpc.CallOption) (*CreateSupportingDocumentResponse, error) {
+	out := new(CreateSupportingDocumentResponse)
+	err := c.cc.Invoke(ctx, "/Document/CreateSupportingDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentClient) UpdateInvoiceDocument(ctx context.Context, in *UpdateInvoiceDocumentRequest, opts ...grpc.CallOption) (*UpdateInvoiceDocumentResponse, error) {
+	out := new(UpdateInvoiceDocumentResponse)
+	err := c.cc.Invoke(ctx, "/Document/UpdateInvoiceDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentClient) UpdateSupportingDocument(ctx context.Context, in *UpdateSupportingDocumentRequest, opts ...grpc.CallOption) (*UpdateSupportingDocumentResponse, error) {
+	out := new(UpdateSupportingDocumentResponse)
+	err := c.cc.Invoke(ctx, "/Document/UpdateSupportingDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DocumentServer is the server API for Document service.
 // All implementations must embed UnimplementedDocumentServer
 // for forward compatibility
@@ -163,6 +256,13 @@ type DocumentServer interface {
 	ListDocument(context.Context, *DocumentParameterRequest) (*ListServiceDocumentResponse, error)
 	RevokeDocument(context.Context, *RevokeDocumentRequest) (*GetDocumentResponse, error)
 	UploadFileService(Document_UploadFileServiceServer) error
+	DownloadFileService(*DownloadFileRequest, Document_DownloadFileServiceServer) error
+	GetInvoiceDocument(context.Context, *GetInvoiceDocumentRequest) (*GetInvoiceDocumentResponse, error)
+	GetSupportingDocument(context.Context, *GetSupportingDocumentRequest) (*GetSupportingDocumentResponse, error)
+	CreateInvoiceDocument(context.Context, *CreateInvoiceDocumentRequest) (*CreateInvoiceDocumentResponse, error)
+	CreateSupportingDocument(context.Context, *CreateSupportingDocumentRequest) (*CreateSupportingDocumentResponse, error)
+	UpdateInvoiceDocument(context.Context, *UpdateInvoiceDocumentRequest) (*UpdateInvoiceDocumentResponse, error)
+	UpdateSupportingDocument(context.Context, *UpdateSupportingDocumentRequest) (*UpdateSupportingDocumentResponse, error)
 	mustEmbedUnimplementedDocumentServer()
 }
 
@@ -190,6 +290,27 @@ func (UnimplementedDocumentServer) RevokeDocument(context.Context, *RevokeDocume
 }
 func (UnimplementedDocumentServer) UploadFileService(Document_UploadFileServiceServer) error {
 	return status.Errorf(codes.Unimplemented, "method UploadFileService not implemented")
+}
+func (UnimplementedDocumentServer) DownloadFileService(*DownloadFileRequest, Document_DownloadFileServiceServer) error {
+	return status.Errorf(codes.Unimplemented, "method DownloadFileService not implemented")
+}
+func (UnimplementedDocumentServer) GetInvoiceDocument(context.Context, *GetInvoiceDocumentRequest) (*GetInvoiceDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetInvoiceDocument not implemented")
+}
+func (UnimplementedDocumentServer) GetSupportingDocument(context.Context, *GetSupportingDocumentRequest) (*GetSupportingDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSupportingDocument not implemented")
+}
+func (UnimplementedDocumentServer) CreateInvoiceDocument(context.Context, *CreateInvoiceDocumentRequest) (*CreateInvoiceDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateInvoiceDocument not implemented")
+}
+func (UnimplementedDocumentServer) CreateSupportingDocument(context.Context, *CreateSupportingDocumentRequest) (*CreateSupportingDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSupportingDocument not implemented")
+}
+func (UnimplementedDocumentServer) UpdateInvoiceDocument(context.Context, *UpdateInvoiceDocumentRequest) (*UpdateInvoiceDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateInvoiceDocument not implemented")
+}
+func (UnimplementedDocumentServer) UpdateSupportingDocument(context.Context, *UpdateSupportingDocumentRequest) (*UpdateSupportingDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSupportingDocument not implemented")
 }
 func (UnimplementedDocumentServer) mustEmbedUnimplementedDocumentServer() {}
 
@@ -346,6 +467,135 @@ func (x *documentUploadFileServiceServer) Recv() (*UploadFileRequest, error) {
 	return m, nil
 }
 
+func _Document_DownloadFileService_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(DownloadFileRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(DocumentServer).DownloadFileService(m, &documentDownloadFileServiceServer{stream})
+}
+
+type Document_DownloadFileServiceServer interface {
+	Send(*DownloadFileResponse) error
+	grpc.ServerStream
+}
+
+type documentDownloadFileServiceServer struct {
+	grpc.ServerStream
+}
+
+func (x *documentDownloadFileServiceServer) Send(m *DownloadFileResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Document_GetInvoiceDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInvoiceDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentServer).GetInvoiceDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Document/GetInvoiceDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentServer).GetInvoiceDocument(ctx, req.(*GetInvoiceDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Document_GetSupportingDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSupportingDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentServer).GetSupportingDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Document/GetSupportingDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentServer).GetSupportingDocument(ctx, req.(*GetSupportingDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Document_CreateInvoiceDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateInvoiceDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentServer).CreateInvoiceDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Document/CreateInvoiceDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentServer).CreateInvoiceDocument(ctx, req.(*CreateInvoiceDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Document_CreateSupportingDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSupportingDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentServer).CreateSupportingDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Document/CreateSupportingDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentServer).CreateSupportingDocument(ctx, req.(*CreateSupportingDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Document_UpdateInvoiceDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateInvoiceDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentServer).UpdateInvoiceDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Document/UpdateInvoiceDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentServer).UpdateInvoiceDocument(ctx, req.(*UpdateInvoiceDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Document_UpdateSupportingDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateSupportingDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentServer).UpdateSupportingDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Document/UpdateSupportingDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentServer).UpdateSupportingDocument(ctx, req.(*UpdateSupportingDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Document_ServiceDesc is the grpc.ServiceDesc for Document service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -373,6 +623,30 @@ var Document_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "RevokeDocument",
 			Handler:    _Document_RevokeDocument_Handler,
 		},
+		{
+			MethodName: "GetInvoiceDocument",
+			Handler:    _Document_GetInvoiceDocument_Handler,
+		},
+		{
+			MethodName: "GetSupportingDocument",
+			Handler:    _Document_GetSupportingDocument_Handler,
+		},
+		{
+			MethodName: "CreateInvoiceDocument",
+			Handler:    _Document_CreateInvoiceDocument_Handler,
+		},
+		{
+			MethodName: "CreateSupportingDocument",
+			Handler:    _Document_CreateSupportingDocument_Handler,
+		},
+		{
+			MethodName: "UpdateInvoiceDocument",
+			Handler:    _Document_UpdateInvoiceDocument_Handler,
+		},
+		{
+			MethodName: "UpdateSupportingDocument",
+			Handler:    _Document_UpdateSupportingDocument_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
@@ -384,6 +658,11 @@ var Document_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "UploadFileService",
 			Handler:       _Document_UploadFileService_Handler,
 			ClientStreams: true,
+		},
+		{
+			StreamName:    "DownloadFileService",
+			Handler:       _Document_DownloadFileService_Handler,
+			ServerStreams: true,
 		},
 	},
 	Metadata: "proto/document.proto",

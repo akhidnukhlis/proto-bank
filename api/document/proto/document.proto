@@ -7,7 +7,6 @@ option go_package = ".";
     Metadata
 =================
 */
-
 message DocumentMeta {
     int32 page = 1;
     int32 per_page = 2;
@@ -19,7 +18,6 @@ message DocumentMeta {
 Parameter Request
 =================
 */
-
 message DocumentParameterRequest {
     int32 page = 1;
     int32 per_page = 2;
@@ -96,12 +94,33 @@ message UploadFileResponse {
     string message = 1;
 }
 
+message DownloadFileResponse {
+    string file_name = 1;
+    bytes file_content = 2;
+}
+
+message SupportingDocumentResponse {
+    string supporting_document_id = 1;
+    string document_type = 2;
+    string document_file = 3;
+    string instruction = 4;
+    string transaction_id = 5;
+  }
+  
+  message InvoiceDocumentResponse {
+    string invoice_document_id = 1;
+    string invoice_request = 2;
+    string unsigned_invoice = 3;
+    string signed_invoice = 4;
+    string payment_proof = 5;
+    string transaction_id = 6;
+  }
+
 /*
 =================
     Request
 =================
 */
-
 message UpdateDocumentRequest {
     string reff_number = 1;
     optional string title = 2;
@@ -142,12 +161,78 @@ message UploadFileRequest {
     bytes content = 2;
 }
 
+message DownloadFileRequest {
+    repeated string file_names = 1;
+}
+
+message GetInvoiceDocumentRequest {
+  string transaction_id = 1;
+}
+
+message GetInvoiceDocumentResponse {
+  InvoiceDocumentResponse invoice_document = 1;
+}
+
+message CreateInvoiceDocumentRequest {
+  string invoice_request = 1;
+  string unsigned_invoice = 2;
+  string signed_invoice = 3;
+  string payment_proof = 4;
+  string transaction_id = 5;
+}
+
+message CreateInvoiceDocumentResponse {
+  InvoiceDocumentResponse invoice_document = 1;
+}
+
+message UpdateInvoiceDocumentRequest {
+  string invoice_request = 1;
+  string unsigned_invoice = 2;
+  string signed_invoice = 3;
+  string payment_proof = 4;
+  string transaction_id = 5;
+}
+
+message UpdateInvoiceDocumentResponse {
+  InvoiceDocumentResponse invoice_document = 1;
+}
+
+message GetSupportingDocumentRequest {
+  string transaction_id = 1;
+}
+
+message GetSupportingDocumentResponse {
+  repeated SupportingDocumentResponse supporting_document = 1;
+}
+
+message CreateSupportingDocumentRequest {
+  string document_type = 1;
+  string document_file = 2;
+  string instruction = 3;
+  string transaction_id = 4;
+}
+
+message CreateSupportingDocumentResponse {
+  SupportingDocumentResponse supporting_document = 1;
+}
+
+message UpdateSupportingDocumentRequest {
+  string supporting_document_id = 1;
+  string document_type = 2;
+  string document_file = 3;
+  string instruction = 4;
+  string transaction_id = 5;
+}
+
+message UpdateSupportingDocumentResponse {
+  SupportingDocumentResponse supporting_document = 1;
+}
+
 /*
 =================
     Service
 =================
 */
-
 service Document {
     rpc StoreDocument(stream UploadDocRequest) returns (UploadDocResponse);    
     rpc GetDocumentByReffNumber(GetDocumentRequest) returns (GetDocumentResponse);
@@ -158,4 +243,12 @@ service Document {
     rpc RevokeDocument (RevokeDocumentRequest) returns (GetDocumentResponse);
 
     rpc UploadFileService(stream UploadFileRequest) returns (UploadFileResponse) {}
+    rpc DownloadFileService(DownloadFileRequest) returns (stream DownloadFileResponse);
+
+    rpc GetInvoiceDocument(GetInvoiceDocumentRequest) returns (GetInvoiceDocumentResponse);
+    rpc GetSupportingDocument(GetSupportingDocumentRequest) returns (GetSupportingDocumentResponse);
+    rpc CreateInvoiceDocument(CreateInvoiceDocumentRequest) returns (CreateInvoiceDocumentResponse);
+    rpc CreateSupportingDocument(CreateSupportingDocumentRequest) returns (CreateSupportingDocumentResponse);
+    rpc UpdateInvoiceDocument(UpdateInvoiceDocumentRequest) returns (UpdateInvoiceDocumentResponse);
+    rpc UpdateSupportingDocument(UpdateSupportingDocumentRequest) returns (UpdateSupportingDocumentResponse);
 }
